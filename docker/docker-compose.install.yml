@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+    install:
+        environment:
+            GITHUB_TOKEN: ${GITHUB_TOKEN}
+        image: yiisoftware/yii2-php:7.3-fpm
+        working_dir: /var/www/html/basic
+        volumes:
+            - ../src:/var/www/html
+        command: |
+            bash -c "
+            function install()
+            {
+                rm -rf vendor
+                rm -rf composer.lock
+                composer config -g github-oauth.github.com ${GITHUB_TOKEN}
+                composer --prefer-dist install
+            }
+            install
+            "
+

@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+    yii-web:
+        image: nginx:latest
+        container_name: yii-web
+        ports:
+            - 8080:80
+        volumes:
+            - ../nginx:/etc/nginx/conf.d
+            - ../src:/var/www/html
+
+    yii-php:
+        image: yiisoftware/yii2-php:7.3-fpm
+        container_name: yii-php
+        volumes:
+            - ../src:/var/www/html
+
+    yii-mysql:
+        image: mysql:5
+        container_name: yii-mysql
+        ports:
+            - 3306:3306
+        volumes:
+            - ../mysql:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: secret
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: phpmyadmin
+        ports:
+            - 8081:80
+        depends_on:
+            - yii-mysql
+        external_links:
+            - yii-mysql:db
+
+networks:
+    default:
+        external:
+            name: dev-network
